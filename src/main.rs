@@ -1,5 +1,6 @@
 mod auth_apis;
 mod device_apis;
+use std::env;
 
 const DEBUG: bool = true;
 
@@ -17,11 +18,11 @@ fn get_base_url(billing_id: &str) -> String {
 
 #[tokio::main]
 async fn main() {
-    let billing: String = env::var("MaaS_billing_id");
-    let app: String = env::var("MaaS_app_id");
-    let access_key: String = env::var("MaaS_access_key");
-    let user: String = env::var("MaaS_username");
-    let password: String = env::var("MaaS_password")
+    let billing: &str = &env::var("MaaS_billing_id").expect("Error: Billing ID environment variable not found");
+    let app: &str = &env::var("MaaS_app_id").expect("Error: App ID environment variable not found");
+    let access_key: &str = &env::var("MaaS_access_key").expect("Error: Access Key environment variable not found");
+    let user: &str = &env::var("MaaS_username").expect("Error: Username environment variable not found");
+    let password: &str = &env::var("MaaS_password").expect("Error: Password environment variable not found");
     let auth_params: auth_apis::APIWrapper<'_> = auth_apis::APIWrapper {
         auth_request: auth_apis::AuthRequest {
             maas360_admin_auth: auth_apis::MaaS360AdminAuth {
