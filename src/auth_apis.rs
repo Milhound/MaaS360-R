@@ -43,11 +43,11 @@ pub struct APIWrapper<'a> {
     pub auth_request: AuthRequest<'a>,
 }
 
-pub async fn authenticate(
-    base_url: &str,
-    body: APIWrapper<'_>,
+pub async fn authenticate<'a>(
+    base_url: &'a str,
+    body: APIWrapper<'a>,
     debug: bool,
-    client: &reqwest::Client,
+    client: &'a reqwest::Client,
 ) -> String {
     let auth_url = &(base_url.to_owned() + "auth-apis/auth/1.0/authenticate/" + &body.auth_request.maas360_admin_auth.billing_id);
 

@@ -2,15 +2,15 @@ mod auth_apis;
 mod device_apis;
 use std::env;
 
-const DEBUG: bool = true;
+const DEBUG: bool = false;
 
-fn get_base_url(billing_id: &str) -> String {
+fn get_base_url(billing_id: &str) -> &str {
     match billing_id.chars().next() {
-        Some('1') => "https://services.fiberlink.com/".to_string(),
-        Some('2') => "https://services.m2.maas360.com/".to_string(),
-        Some('3') => "https://services.m3.maas360.com/".to_string(),
-        Some('4') => "https://services.m4.maas360.com/".to_string(),
-        Some('6') => "https://services.m6.maas360.com/".to_string(),
+        Some('1') => "https://services.fiberlink.com/",
+        Some('2') => "https://services.m2.maas360.com/",
+        Some('3') => "https://services.m3.maas360.com/",
+        Some('4') => "https://services.m4.maas360.com/",
+        Some('6') => "https://services.m6.maas360.com/",
         Some(_) => panic!("Billing ID is incorrect"),
         None => panic!("No Billing ID entered"),
     }
@@ -37,11 +37,11 @@ async fn main() {
         },
     };
 
-    let billing_id: String = auth_params.auth_request.maas360_admin_auth.billing_id.to_string();
-    let base_url: String = get_base_url(&billing_id);
+    let billing_id: &str = auth_params.auth_request.maas360_admin_auth.billing_id;
+    let base_url: &str = get_base_url(&billing_id);
     let client = reqwest::Client::new();
-    let api_token: String = auth_apis::authenticate(&base_url, auth_params, DEBUG, &client).await;
+    let api_token: String = auth_apis::authenticate(base_url, auth_params, DEBUG, &client).await;
     let devices: Result<device_apis::Root, Box<dyn std::error::Error>> =
-        Ok(device_apis::get_all_devices(&base_url, &billing_id, DEBUG, &api_token.clone(), &client).await.unwrap());
+        Ok(device_apis::get_all_devices(base_url, billing_id, DEBUG, &api_token, &client).await.unwrap());
     println!("All Devices...\n{:?}", devices.expect("Failed to get devices"));
 }
